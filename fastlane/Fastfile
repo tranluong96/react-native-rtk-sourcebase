@@ -1,0 +1,252 @@
+# Shared iOS configs
+TARGET = "MyApp"
+SCHEME = "MyApp"
+IOS_WORKSPACE = "./ios/MyApp.xcworkspace"
+IOS_XCODEPROJ = "./ios/MyApp.xcodeproj"
+IOS_PLIST = "MyApp/Info.plist"
+
+# ========== Shared Lanes ==========
+
+desc "Copy FCM service"
+lane :copy_fcm_service do 
+  flavor = ENV["ENVIRONMENT"]
+  sh("../scripts/copy_fcm_service.sh #{flavor}")
+end
+
+desc "DEV: Create release notes"
+private_lane :create_release_notes_dev do |options|
+  last_commit = File.read('./last_commit.txt').strip
+  sh "git log #{last_commit}..dev --pretty=tformat:\"#{options[:format]}\" > release_notes.txt"
+end
+
+desc "UAT: Create release notes"
+private_lane :create_release_notes_uat do |options|
+  last_commit = File.read('./last_commit.txt').strip
+  sh "git log #{last_commit}..uat --pretty=tformat:\"#{options[:format]}\" > release_notes.txt"
+end
+
+desc "puts message"
+private_lane :puts_message do |options|
+  message_result = "\n"
+  message_result += "os_name: #{options[:os_name]}"
+  message_result += "\nversion_name: #{options[:version_name]}"
+  message_result += "\nversion_code: #{options[:version_code]}"
+  message_result += "\nrevision: #{options[:revision]}"
+  message_result += "\nmessage: #{options[:message]}"
+  message_result += "\n"
+  puts message_result
+end
+
+# ========== Android ==========
+platform :android do
+  #
+  # Menu
+  #
+  
+  # 1. Deploy
+  desc "DEV[android]: Build and Deploy to DeployGate"
+  lane :dev_deploy do
+    create_release_notes_dev(format: '[DEV-Android]: %h %s')
+    gradle(task: "clean assembleRelease", project_dir: 'android/')
+    upload_deploygate
+  end
+
+  desc "DEV[android]: Upload to DeployGate"
+  private_lane :upload_deploygate do
+    File.open('./release_notes.txt').each do |line|
+        @releasenote = line
+        break
+    end
+    response = deploygate(
+      api_token: ENV["DEPLOYGATE_API_KEY"],
+      user: ENV["DEPLOYGATE_USER"],
+      apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
+      message: "#{@releasenote}"
+    )
+
+    puts_message(
+      os_name: response['results']['os_name'],
+      version_name: response['results']['version_name'],
+      version_code: response['results']['version_code'],
+      revision: response['results']['revision'],
+      message: @releasenote
+    )
+  end
+
+  desc "PROD[android]: Build and Deploy to Play Store"
+  lane :prod_deploy do
+    create_release_notes_prod(format: '[PROD-Android]: %h %s')
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: 'android/', 
+    )
+  end
+end
+
+# ========== iOS ==========
+
+platform :ios do
+  #
+  # Menu
+  #
+  
+  # 1. Deploy
+  desc "DEV[ios]: Build and Deploy to DeployGate"
+  lane :dev_deploy do
+    create_release_notes_dev(format: '[DEV-iOS]: %h %s')
+    make_build_folder
+    update_code_signing_settings(
+      path: IOS_XCODEPROJ_PATH, 
+      use_automatic_signing: false,
+      profile_name: ENV["PROVISIONING_IOS"],
+      bundle_identifier: ENV["BUNDLE_IOS_ID"],
+      code_sign_identity: "iPhone Developer",
+      team_id: ENV["APPLE_TEAM_ID"],
+      targets:[TARGET_DEV]
+    )
+    build_app_with(
+      scheme: SCHEME_DEV,
+      path_workspace: PATH_IOS_WORKSPACE,
+      bundle: ENV["BUNDLE_IOS_ID"],
+      provisioning: ENV["PROVISIONING_IOS"],
+      exportmethod: "development",
+      configuration: "Release",
+    )
+    upload_deploygate
+    cache_artifact_file(bundle_id: ENV["BUNDLE_IOS_ID"], target: TARGET_DEV, xcodeproj: IOS_XCODEPROJ_PATH)
+  end
+
+  # 2. Deploy
+  desc "PROD[ios]: Build and Deploy to AppStore"
+  lane :prod_deploy do |options|
+    create_release_notes_prod(format: '[PROD-iOS]: %h %s')
+    buildNumber = prompt(text: "Build number: ")
+    make_build_folder
+    update_code_signing_settings(
+      path: IOS_XCODEPROJ_PATH, 
+      use_automatic_signing: false,
+      profile_name: ENV["PROVISIONING_IOS"],
+      bundle_identifier: ENV["BUNDLE_IOS_ID"],
+      code_sign_identity: "iPhone Distribution",
+      team_id: ENV["APPLE_TEAM_ID"],
+      targets:[TARGET_PROD]
+    )
+    
+    update_info_plist(
+      xcodeproj: IOS_XCODEPROJ_PATH,
+      plist_path: IOS_PLIST_PATH,
+      block: lambda do |plist|
+        plist['CFBundleVersion'] = "#{buildNumber}"
+        plist['CFBundleShortVersionString'] = "1.0.0"
+      end
+    )
+
+    build_app_with(
+      scheme: SCHEME_PROD,
+      path_workspace: PATH_IOS_WORKSPACE,
+      bundle: ENV["BUNDLE_IOS_ID"],
+      provisioning: ENV["PROVISIONING_IOS"],
+      configuration: "Release",
+      exportmethod: "app-store"
+    )
+    create_release_notes(format: '[Prod-iOS]: %h %s')
+    upload_testflight
+    cache_artifact_file_prod(bundle_id: ENV["BUNDLE_IOS_ID"], target: TARGET_PROD, xcodeproj: IOS_XCODEPROJ_PATH)
+  end
+
+
+  desc "Make `build` Folder"
+  private_lane :make_build_folder do
+    sh "rm -rf ../build"
+    sh "mkdir -p ../build"
+  end
+
+  desc "Build app with options"
+  private_lane :build_app_with do |options|
+    @export_method = "enterprise"
+    if (!"#{options[:exportmethod]}".to_s.empty?)
+     @export_method = "#{options[:exportmethod]}"
+    end
+    sh "echo #{@export_method}"
+    build_app(
+      scheme: "#{options[:scheme]}",
+      workspace: "#{options[:path_workspace]}",
+      clean: true,
+      output_name: "my_app.ipa",
+      include_bitcode: false,
+      skip_profile_detection: true,
+      export_method: "#{@export_method}",
+      configuration: "#{options[:configuration]}",
+      export_options: {
+        provisioningProfiles: { 
+          "#{options[:bundle]}": "#{options[:provisioning]}",
+        }
+      }
+    )
+  end
+
+  desc "Upload to DeployGate"
+  private_lane :upload_deploygate do
+    File.open('./release_notes.txt').each do |line|
+        @releasenote = line
+        break
+    end
+    response = deploygate(
+      api_token: ENV["DEPLOYGATE_API_KEY"],
+      user: ENV["DEPLOYGATE_USER"],
+      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
+      message: "#{@releasenote}"
+    )
+    puts_message(
+      os_name: response['results']['os_name'],
+      version_name: response['results']['version_name'],
+      version_code: response['results']['version_code'],
+      revision: response['results']['revision'],
+      message: @releasenote
+    )
+  end
+
+  desc "Upload to Testflight"
+  private_lane :upload_testflight do
+    File.open('./release_notes.txt').each do |line|
+        @releasenote = line
+        break
+    end
+    
+     upload_to_testflight(
+      username: "demo@dipro.vn",
+      skip_submission: true,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Cache file for Artifacts"
+  private_lane :cache_artifact_file do |options|
+    @ios_app_version = get_version_number(xcodeproj: "#{options[:xcodeproj]}", target: "#{options[:target]}")
+    @output_name = "my_app-#{options[:bundle_id]}-#{@ios_app_version} " + Time.now.strftime("%Y-%m-%d %H-%M-%S")
+
+    sh "mv ./release_notes.txt \"../build/release_notes.txt\""
+    sh "mv ../my_app.ipa \"../build/#{@output_name}.ipa\""
+    sh "mv ../my_app.app.dSYM.zip \"../build/#{@output_name}.app.dSYM.zip\""
+  end
+
+  desc "Cache file for Artifacts prod"
+  private_lane :cache_artifact_file_prod do |options|
+    @ios_app_version = get_version_number(xcodeproj: "#{options[:xcodeproj]}", target: "#{options[:target]}")
+    @output_name = "pharmacy_prod-#{options[:bundle_id]}-#{@ios_app_version} " + Time.now.strftime("%Y-%m-%d %H-%M-%S")
+
+    sh "mv ./release_notes.txt \"../build/release_notes.txt\""
+    sh "mv ../my_app.ipa \"../build/#{@output_name}.ipa\""
+    sh "mv ../my_app.app.dSYM.zip \"../build/#{@output_name}.app.dSYM.zip\""
+  end
+
+end
+
+# ========== Shared Notification ==========
+
+private_lane :rocket_notify do |options|
+  messages = File.readlines('./release_notes.txt').map(&:chomp).join(", ")
+  Dir.chdir "../" do
+    sh("./scripts/notify_rocket_dev.sh \"#{options[:app_name]}\" \"#{messages}\"")
+  end
+end

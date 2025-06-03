@@ -1,0 +1,12 @@
+{
+  "error": {},
+  "warning": {},
+  "success": {},
+  "notification": "通知",
+  "cancel": "キャンセル",
+  "setting": "設定",
+  "appName": {
+    "full": "MyApp React Native",
+    "initials": "RNB"
+  }
+}

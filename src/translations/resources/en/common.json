@@ -1,0 +1,15 @@
+{
+  "error": {},
+  "warning": {
+    "permission_camera_message": "Warning permission camera message",
+    "message_alert_permission_photo_gallery": "Warning message alert permission photo gallery"
+  },
+  "success": {},
+  "appName": {
+    "full": "React Native MyApp",
+    "initials": "RNB"
+  },
+  "notification": "Notification",
+  "cancel": "Cancel",
+  "setting": "Setting"
+}
