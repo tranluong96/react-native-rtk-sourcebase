@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
@@ -9,6 +9,7 @@ import { LoginScreen, Startup } from '../screens';
 import { useTheme } from '../hooks';
 import MainNavigator from './Main';
 import { ApplicationStackParamList } from '../../@types/navigation';
+import moment from 'moment';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 
@@ -18,6 +19,11 @@ const ApplicationNavigator = () => {
   const { colors } = NavigationTheme;
 
   const navigationRef = useNavigationContainerRef();
+
+  useEffect(() => {
+    moment.locale("ja");
+  }, []);
+
   return (
     <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
       <NavigationContainer theme={NavigationTheme} ref={navigationRef} >

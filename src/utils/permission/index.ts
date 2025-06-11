@@ -1,4 +1,4 @@
-import { showAlert } from "@/components/alert/alert";
+import { showAlert } from "@/components/Alert/Alert";
 import i18n from "@/translations";
 import { LocaleKeys } from "@/translations/locale_keys";
 import { isIos } from "../configs/const";
