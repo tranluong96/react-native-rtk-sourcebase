@@ -5,11 +5,12 @@ import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import { LoginScreen, Startup } from '../screens';
+import { Example2Screen, LoginScreen, Startup } from '../screens';
 import { useTheme } from '../hooks';
 import MainNavigator from './Main';
 import { ApplicationStackParamList } from '../../@types/navigation';
 import moment from 'moment';
+import { requestPermission } from '@/services/firebase/fcm_push_notification';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 
@@ -22,6 +23,7 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     moment.locale("ja");
+    requestPermission();
   }, []);
 
   return (
@@ -32,6 +34,7 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="Startup" component={Startup} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Main" component={MainNavigator} />
+          <Stack.Screen name={'Example2'} component={Example2Screen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

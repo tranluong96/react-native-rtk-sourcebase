@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -13,6 +14,9 @@ import { ApplicationScreenProps } from 'types/navigation';
 import { BottomSheetCustom } from '@/components/BottomSheet';
 import { EBottomSheetType } from '@/utils/configs/enum';
 import { K_SCREEN_HEIGHT } from '@/utils/configs/screens';
+import { reduxStorage } from '@/store';
+import { TYPE_CONSTANT } from '@/utils/configs/const';
+import { navigateAndSimpleReset } from '@/navigators/navigate_ext';
 
 
 const HomeScreen = ({ navigation }: ApplicationScreenProps) => {
@@ -24,9 +28,18 @@ const HomeScreen = ({ navigation }: ApplicationScreenProps) => {
   const dispatch = useDispatch();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
+  //on handle logOut 
+  const onHandleLogOut = async () => {
+    await reduxStorage.removeItem(TYPE_CONSTANT.SESSION);
+    navigateAndSimpleReset(navigation, 'Login');
+  }
 
   const renderRightHeader = () => {
-    return <Text>Right menu</Text>
+    return (
+      <TouchableOpacity onPress={onHandleLogOut}>
+        <Text>Log Out</Text>
+      </TouchableOpacity>
+    );
   }
 
   const handleIncrementBadge = () => {

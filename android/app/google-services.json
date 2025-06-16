@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "334753512243",
+    "project_id": "ansin-dev-test",
+    "storage_bucket": "ansin-dev-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334753512243:android:8a76fafbe316f0476adc46",
+        "android_client_info": {
+          "package_name": "dipro.app.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWDOelP1sWOA-eeZd0y_6rCEnRVE3NUBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

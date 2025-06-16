@@ -7,6 +7,9 @@ import {
 import { ApplicationScreenProps } from 'types/navigation';
 import { Header, Input } from '@/components';
 import useTheme from '@/hooks/useTheme';
+import { reduxStorage } from '@/store';
+import { TYPE_CONSTANT } from '@/utils/configs/const';
+import { navigateAndSimpleReset } from '@/navigators/navigate_ext';
 
 const LoginScreen = ({ navigation }: ApplicationScreenProps) => {
   const {
@@ -22,8 +25,9 @@ const LoginScreen = ({ navigation }: ApplicationScreenProps) => {
     return <Text>Left menu 2</Text>
   }
 
-  const login = () => {
-    navigation.navigate('Main')
+  const login = async () => {
+    await reduxStorage.setItem(TYPE_CONSTANT.SESSION, '123');
+    navigateAndSimpleReset(navigation, 'Main');
   }
 
   return (

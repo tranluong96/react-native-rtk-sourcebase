@@ -3,6 +3,10 @@ import { ActivityIndicator, View } from 'react-native';
 import { useTheme } from '@/hooks';
 import { setDefaultTheme } from '@/store/theme';
 import { ApplicationScreenProps } from 'types/navigation';
+import { isNullOrEmpty } from '@/utils/functions';
+import { reduxStorage } from '@/store';
+import { TYPE_CONSTANT } from '@/utils/configs/const';
+import { navigateAndSimpleReset } from '@/navigators/navigate_ext';
 
 const Startup = ({ navigation }: ApplicationScreenProps) => {
   const { Layout, Gutters } = useTheme();
@@ -14,10 +18,12 @@ const Startup = ({ navigation }: ApplicationScreenProps) => {
       }, 2000),
     );
     await setDefaultTheme({ theme: 'default', darkMode: null });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Main' }],
-    });
+    const json = await reduxStorage.getItem(TYPE_CONSTANT.SESSION);
+    if (isNullOrEmpty(json)) {
+      navigateAndSimpleReset(navigation, 'Login');
+    } else {
+      navigateAndSimpleReset(navigation, 'Main');
+    }
   };
 
   useEffect(() => {

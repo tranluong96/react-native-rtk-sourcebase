@@ -19,7 +19,6 @@ export const ProfileStackScreen = () => {
     return (
         <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
             <ProfileStack.Screen name={'RootProfile'} component={ProfileScreen} />
-            <ProfileStack.Screen name={'Example2'} component={Example2Screen} />
         </ProfileStack.Navigator>
     )
 }
