@@ -1,0 +1,18 @@
+{
+  "title": "おかえりなさい",
+  "subtitle": "$t(common:appName.full) にサインインして続行",
+  "emailLabel": "メールアドレス",
+  "emailPlaceholder": "you@example.com",
+  "passwordLabel": "パスワード",
+  "passwordPlaceholder": "パスワードを入力",
+  "forgotPassword": "パスワードをお忘れですか？",
+  "signIn": "サインイン",
+  "noAccount": "アカウントをお持ちでない場合",
+  "signUp": "新規登録",
+  "errors": {
+    "emailRequired": "メールアドレスを入力してください",
+    "emailInvalid": "メールアドレスが正しくありません",
+    "passwordRequired": "パスワードを入力してください",
+    "passwordMin": "パスワードは6文字以上で入力してください"
+  }
+}

@@ -1,6 +1,6 @@
 import { url } from 'inspector';
 import { api } from '../../api';
-import { User } from '../../../models/user.ds';
+import { User } from '../../../models/user';
 
 export const userApi = api.injectEndpoints({
   endpoints: build => ({

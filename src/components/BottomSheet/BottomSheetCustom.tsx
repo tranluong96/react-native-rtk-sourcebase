@@ -64,7 +64,7 @@ const BottomSheetCustom = ({
                 enablePanDownToClose={enablePanDownToClose}
                 onChange={onChange}
                 index={-1}
-                backdropComponent={isBackDrop ? renderBackdrop : null}
+                backdropComponent={isBackDrop ? renderBackdrop : undefined}
                 handleComponent={isHideHeader ? null : renderHeaderHandle}
             >
                 {type === EBottomSheetType.DEFAULT && (

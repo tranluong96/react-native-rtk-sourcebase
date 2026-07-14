@@ -6,6 +6,11 @@ export const Colors = {
   textGray400: '#969696',
   textGray200: '#BABABA',
   inputBackground: '#3a3a3a',
+  background: '#141319',
+  card: '#232230',
+  border: '#33323F',
+  brand: '#8A9BFF',
+  brandSoft: '#2A2C46',
   circleButtonBackground: '#252732',
 };
 

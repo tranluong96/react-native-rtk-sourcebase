@@ -6,3 +6,4 @@ export { default as HomeScreen } from './Home/HomeScreen';
 export { default as ExampleScreen } from './Example/ExampleScreen';
 export { default as LoginScreen } from './Login/LoginScreen';
 export { default as Example2Screen } from './Example2/Example2Screen';
+export { default as TransferScreen } from './Transfer/TransferScreen';

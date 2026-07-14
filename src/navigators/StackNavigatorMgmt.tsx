@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Example2Screen, ExampleScreen, HomeScreen, ProfileScreen } from '../screens';
+import { Example2Screen, ExampleScreen, HomeScreen, ProfileScreen, TransferScreen } from '../screens';
 import { ApplicationScreenProps } from '../../@types/navigation';
 
 const HomeStack = createStackNavigator<ApplicationScreenProps>();
@@ -19,6 +19,7 @@ export const ProfileStackScreen = () => {
     return (
         <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
             <ProfileStack.Screen name={'RootProfile'} component={ProfileScreen} />
+            <ProfileStack.Screen name={'Transfer'} component={TransferScreen} />
         </ProfileStack.Navigator>
     )
 }

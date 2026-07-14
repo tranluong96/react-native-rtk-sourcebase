@@ -17,5 +17,15 @@ export const androidStoreURL = "";
 export const appStore = "";
 export const playStore = "";
 
+// Transfer demo (see TransferScreen). Point these at your own endpoints; a
+// large download is the easiest way to watch a cancel actually stop the bytes.
+export const DEMO_UPLOAD_URL = "/upload";
+export const DEMO_DOWNLOAD_URL = "/download";
+export const DEMO_UPLOAD_FILE = {
+    uri: "",
+    name: "demo.jpg",
+    type: "image/jpeg",
+};
+
 export const isIos = Platform.OS === 'ios';
 export const isAndroid = Platform.OS === 'android';

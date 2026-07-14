@@ -11,6 +11,7 @@ import { PortalProvider } from "@gorhom/portal";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "./screens/Splash/SplashScreen";
+import { NetworkListener } from "./components";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <KeyboardProvider>
           <BottomSheetModalProvider>
             <Provider store={store}>
+              <NetworkListener />
               <PortalProvider>
                 {/**
                * PersistGate delays the rendering of the app's UI until the persisted state has been retrieved

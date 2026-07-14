@@ -1,0 +1,7 @@
+{
+  "offlineTitle": "No internet connection",
+  "offlineMessage": "You are offline. Please check your network and try again.",
+  "restoredTitle": "Back online",
+  "restoredMessage": "Your internet connection has been restored.",
+  "ok": "OK"
+}

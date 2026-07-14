@@ -69,7 +69,7 @@ export const FcmPushNotification = () => {
     };
 
     const registerBackgroundMessageHandler = () => {
-        messaging(getApp()).setBackgroundMessageHandler(async remoteMessage => {
+        messagingInstance.setBackgroundMessageHandler(async remoteMessage => {
             console.log('🔵 Background message:', remoteMessage);
             await displayNotification(remoteMessage);
         });
@@ -153,7 +153,7 @@ export const requestPermission = async () => {
     const settings = await notifee.requestPermission();
     console.log('🔑 Notifee permission:', settings.authorizationStatus);
     if (settings.authorizationStatus === AuthorizationStatus.AUTHORIZED) {
-        getDeviceToken();
+        // getDeviceToken();
     }
 };
 

@@ -7,9 +7,10 @@ interface IBaseBTSheetProps {
   bottomSheetRef: React.Ref<BottomSheet>;
   children: React.ReactNode;
   onClose?: () => void;
+  enablePanDownToClose?: boolean;
 }
 
-const BaseBTSheet = ({ children, bottomSheetRef, onClose }: IBaseBTSheetProps) => {
+const BaseBTSheet = ({ children, bottomSheetRef, onClose, enablePanDownToClose }: IBaseBTSheetProps) => {
   // state
   const [backdropPressBehavior, setBackdropPressBehavior] = useState<
     'none' | 'close' | 'collapse'
@@ -33,6 +34,7 @@ const BaseBTSheet = ({ children, bottomSheetRef, onClose }: IBaseBTSheetProps) =
     <BottomSheet
       ref={bottomSheetRef}
       snapPoints={snapPoints}
+      enablePanDownToClose={enablePanDownToClose}
       backdropComponent={renderBackdrop}
       handleComponent={renderHeaderHandle}
     >

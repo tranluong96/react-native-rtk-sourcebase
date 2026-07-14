@@ -12,14 +12,19 @@ import {
   Storage,
 } from 'redux-persist';
 import { MMKV } from 'react-native-mmkv';
+import NetInfo from '@react-native-community/netinfo';
 
 import { api } from '../services/api';
 import theme from './theme';
 import notification from './notification';
+import network from './network';
+import transfer from './transfer';
 
 const reducers = combineReducers({
   theme,
   notification,
+  network,
+  transfer,
   [api.reducerPath]: api.reducer,
 });
 
@@ -59,6 +64,13 @@ const store = configureStore({
 
 const persistor = persistStore(store);
 
-setupListeners(store.dispatch);
+// Wire RTK Query's online/offline events to NetInfo so queries with
+// `refetchOnReconnect` automatically refetch once the network is back.
+setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
+  const subscription = NetInfo.addEventListener(state => {
+    dispatch(state.isConnected ? onOnline() : onOffline());
+  });
+  return () => subscription();
+});
 
 export { store, persistor };

@@ -14,6 +14,6 @@ module.exports = {
       },
     ],
     'inline-dotenv',
-    'react-native-reanimated/plugin', // needs to be last
+    'react-native-worklets/plugin', // Reanimated 4 moved its babel plugin here; needs to be last
   ],
 };

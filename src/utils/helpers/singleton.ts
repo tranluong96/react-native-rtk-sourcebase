@@ -20,5 +20,7 @@ class DataHelpSingleton {
     public setCountryDevice(country: string): void {
         this.countryDevice = country;
     }
-    
+
 }
+
+export default DataHelpSingleton;

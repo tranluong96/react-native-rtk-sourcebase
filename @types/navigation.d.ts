@@ -9,6 +9,7 @@ export type ApplicationStackParamList = {
   Startup: undefined;
   Example: undefined;
   Example2: undefined;
+  Transfer: undefined;
   BackdropExample: undefined;
   Login: undefined;
   Main: NavigatorScreenParams<MainParamsList>;

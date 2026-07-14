@@ -22,9 +22,16 @@ export const Colors = {
   success: '#28a745',
   error: '#dc3545',
   primaryText: '#000000',
+  //Surfaces
+  background: '#F4F5F7',
+  card: '#FFFFFF',
+  border: '#E6E8EB',
+  //Brand accent
+  brand: '#4C6FFF',
+  brandSoft: '#EDF1FF',
   //ComponentColors
   circleButtonBackground: '#E1E1EF',
-  circleButtonColor: '#44427D',
+  circleButtonColor: '#61C4DD',
 };
 
 export const NavigationColors: Partial<ThemeNavigationColors> = {

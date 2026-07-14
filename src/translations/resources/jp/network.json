@@ -1,0 +1,7 @@
+{
+  "offlineTitle": "インターネット接続がありません",
+  "offlineMessage": "オフラインです。ネットワークを確認して、もう一度お試しください。",
+  "restoredTitle": "オンラインに復帰しました",
+  "restoredMessage": "インターネット接続が回復しました。",
+  "ok": "OK"
+}

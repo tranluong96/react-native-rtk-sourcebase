@@ -3,6 +3,7 @@ import { Alert, Linking, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import checkVersion from 'react-native-store-version';
 import { androidStoreURL, appStore, iosStoreURL, playStore } from '@/utils/configs/const';
+import DataHelpSingleton from '@/utils/helpers/singleton';
 
 interface AppUpdateCheckerProps {
   onError?: (error: any) => void;

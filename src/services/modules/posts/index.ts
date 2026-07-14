@@ -1,7 +1,7 @@
 import { api } from '../../api';
 import { Post } from '../../../models/post';
 
-export const userApi = api.injectEndpoints({
+export const postApi = api.injectEndpoints({
   endpoints: build => ({
     addPost: build.mutation<Post, Omit<Post, "id">>({
       query: body => ({
@@ -14,4 +14,4 @@ export const userApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useAddPostMutation } = userApi;
+export const { useAddPostMutation } = postApi;

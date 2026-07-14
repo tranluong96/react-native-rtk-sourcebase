@@ -5,6 +5,13 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# RN 0.86 defaults to prebuilt React Native Core + Dependencies binaries. That breaks
+# @react-native-firebase (built as a static framework): the prebuilt React-Core hides macros/types
+# like RCT_EXTERN/RCTConvert, and the prebuilt Folly omits headers (e.g. folly/coro/Coroutine.h) that
+# the from-source React-Core needs. Build both from source for a consistent, Firebase-compatible setup.
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+ENV['RCT_USE_RN_DEP'] = '0'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -28,12 +35,30 @@ target 'MyApp' do
   )
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # Firebase pods are built as static frameworks (use_frameworks! :static above), so they
+        # #import non-modular React-Core headers (RCTConvert.h, RCTBridgeModule.h, ...). Xcode treats
+        # that as an error under RN 0.86's header/module layout. Allow it for the Pods project.
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+
+        # RN keeps Folly coroutines OFF (its vendored Folly ships no folly/coro/ headers) via
+        # -DFOLLY_CFG_NO_COROUTINES=1. Under use_frameworks! that flag doesn't propagate to every
+        # target, so Folly auto-detects coroutines and #include <folly/coro/Coroutine.h> fails.
+        # Force it off for all pod targets, matching RN's own default.
+        defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+        defs = [defs] unless defs.is_a?(Array)
+        defs << 'FOLLY_CFG_NO_COROUTINES=1' unless defs.include?('FOLLY_CFG_NO_COROUTINES=1')
+        defs << 'FOLLY_HAS_COROUTINES=0' unless defs.include?('FOLLY_HAS_COROUTINES=0')
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+      end
+    end
   end
 end

@@ -1,8 +1,8 @@
 import React, { ReactElement, Ref, useState } from 'react'
-import { View, TextInput, TouchableOpacity, ViewStyle, ColorValue, TextStyle } from 'react-native'
+import { View, TextInput, TextInputProps, TouchableOpacity, ViewStyle, ColorValue, TextStyle } from 'react-native'
 import { useTheme } from '../../hooks';
 
-type Props = {
+type Props = Omit<TextInputProps, 'style' | 'multiline' | 'editable' | 'onSubmitEditing'> & {
   rightLabel?: ReactElement,
   rightStyle?: ViewStyle,
   rightIconStyle?: ViewStyle,

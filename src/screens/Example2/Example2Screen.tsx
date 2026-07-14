@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  Button,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +15,11 @@ import i18next from 'i18next';
 import { useTheme } from '@/hooks';
 import { useLazyFetchOneQuery } from '@/services/modules/users';
 import { changeTheme, ThemeState } from '@/store/theme';
-import { Header } from '@/components';
+import { BaseBTSheet, Header } from '@/components';
 import Functions from '@/utils/functions';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { decrementBadge, incrementBadge } from '@/store/notification';
+import { K_SCREEN_HEIGHT } from '@/utils/configs/screens';
 
 const Example2Screen = () => {
   const { t } = useTranslation(['example', 'welcome']);
@@ -28,6 +32,7 @@ const Example2Screen = () => {
     darkMode: isDark,
   } = useTheme();
   const dispatch = useDispatch();
+  const bottomSheetRef = React.useRef<BottomSheetModal>(null);
 
   const [fetchOne, { data, isSuccess, isLoading, isFetching }] =
     useLazyFetchOneQuery();
@@ -46,6 +51,7 @@ const Example2Screen = () => {
     Functions.onChangeLanguage(lang);
   };
 
+
   return (
     <ScrollView
       style={Layout.fill}
@@ -55,7 +61,8 @@ const Example2Screen = () => {
         Layout.colCenter,
         Layout.scrollSpaceBetween,
       ]}
-    ><Header title={"example2"} isShowBack />
+    >
+      <Header title={"example2"} isShowBack />
       <View
         style={[
           Layout.fill,
@@ -176,7 +183,18 @@ const Example2Screen = () => {
             {t('welcome:description')}
           </Text>
         </View>
-
+        <View style={[Layout.row]}>
+          <Button
+            title="Open Bottomsheet"
+            onPress={() => {
+              if (bottomSheetRef.current) {
+                bottomSheetRef.current.expand();
+              } else {
+                console.log("bottomSheetRef.current is null");
+              }
+            }}
+          />
+        </View>
         <View
           style={[
             Layout.row,
@@ -185,6 +203,7 @@ const Example2Screen = () => {
             Gutters.smallTMargin,
           ]}
         >
+
           <TouchableOpacity
             style={[Common.button.circle, Gutters.regularBMargin]}
             onPress={() => fetchOne(`${Math.ceil(Math.random() * 10 + 1)}`)}
@@ -222,6 +241,14 @@ const Example2Screen = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <BaseBTSheet
+        bottomSheetRef={bottomSheetRef}
+        enablePanDownToClose
+        onClose={() => bottomSheetRef.current?.close()}
+        children={<View style={[Layout.fill, { height: K_SCREEN_HEIGHT / 2 }]}>
+          <Text>Hello</Text>
+        </View>}
+      />
     </ScrollView>
   );
 };

@@ -1,4 +1,4 @@
-package com.myapp
+package dipro.app.dev
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
