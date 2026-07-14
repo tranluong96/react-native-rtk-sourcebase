@@ -1,6 +1,6 @@
-# React Native Base (Dipro)
+# React Native Base
 
-Bộ khung (base) React Native dùng chung cho các dự án tại Dipro. Dựng sẵn theo kiến trúc module hóa: theme/dark-mode, đa ngôn ngữ, state management, cancel request, push notification, điều hướng và CI/CD — bắt đầu dự án mới chỉ việc clone và viết feature.
+Bộ khung (base) React Native dùng chung cho các dự án. Dựng sẵn theo kiến trúc module hóa: theme/dark-mode, đa ngôn ngữ, state management, cancel request, push notification, điều hướng và CI/CD — bắt đầu dự án mới chỉ việc clone và viết feature.
 
 | | |
 |---|---|
